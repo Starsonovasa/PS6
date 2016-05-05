@@ -97,7 +97,7 @@ def mean_square_diff(v1,v2):
 #                     
 #     return end_matrix
 
-def vectorMultiply(matrix, vector):
+def matrixVectorMultiply(matrix, vector):
     n, m = len(matrix), len(matrix[0])
     end_vector = [0 for i in range(n)]
     
@@ -109,6 +109,10 @@ def vectorMultiply(matrix, vector):
         end_vector[i] = sum
     
     return end_vector
+
+def dotProduct(vector1, vector2):
+    output += vector1[i]*vector2[i] for i in range(len(vector1))
+    return output
 '''
 Compute a 'sufficiently close to optimal' x using gradient descent
 Inputs:
@@ -127,7 +131,11 @@ def gradient_descent(Theta, Y, initial_x, eta):
     c = 2*eta/n
     
     def vectorSubtract(vector1, vector2):
-        sum = [vector1[i] - vector2[i] for i in range(len(vector1))]
+        diff = [vector1[i] - vector2[i] for i in range(len(vector1))]
+        return diff
+    
+    def vectorAdd(vector1, vector2):
+        sum = [vector1[i] + vector2[i] for i in range(len(vector1))]
         return sum
     
     def scalarMultiply(scalar, vector):
@@ -137,15 +145,20 @@ def gradient_descent(Theta, Y, initial_x, eta):
     while mean_square_change > 0.0000000001:
         
         #TODO: update current x and compute stopping condition
-        #current_x = current_x - (2*eta/n)*(y-Theta*x)
+        #current_x = current_x - eta*Gradient
+        #Gradient = [dG/dx_0, dG/dx_1, ...., dG/dx_n]
+        #dG/dx_n = -2/n * Sum for all i: (y_i - Theta_i*x)*(Theta_i)_n
+        
         #So I need a function that can multiply two matrices. Which is quite ugly
+        #probably not anymore
         
         #update block
         
         #TODO: actually implement multiplyMatrices
-        thetaTimesX = vectorMultiply(Theta, current_x)
-        yMinusThetaX = vectorSubtract(Y, thetaTimesX)
-        etaTimesGradient = scalarMultiply(c, yMinusThetaX)
+        for row in range(n):
+            thetaDotX = dotProduct(Theta[row], current_x)
+            yMinusThetaX = Y[row] - thetaDotX
+            etaTimesGradient = scalarMultiply(c, yMinusThetaX)
         new_x = vectorSubtract(current_x, etaTimesGradient)
         #End of update block
         
