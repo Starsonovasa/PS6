@@ -69,6 +69,10 @@ def mean_square_diff(v1,v2):
 #    x_at_iteration_k+1 = [1,4,2,6]
 #    mean_square_change = mean_square_diff(x_at_iteration_k,x_at_iteration_k+1)
 
+def multipyMatrices(matrix1, matrix2):
+    matrix1n, matrix1m = len(matrix1), len(matrix1[0])
+    matrix2n, matrix2m = len(matrix2), len(matrix2[0])
+    pass
 '''
 Compute a 'sufficiently close to optimal' x using gradient descent
 Inputs:
@@ -87,6 +91,18 @@ def gradient_descent(Theta, Y, initial_x, eta):
 
     while mean_square_change > 0.0000000001:
         #TODO: update current x and compute stopping condition
+        #current_x = current_x - (2*eta/n)*(y-Theta*x)
+        #So I need a function that can multiply two matrices. Which is quite ugly
+        
+        #update block
+        c = 2*eta/n
+        #TODO: actually implement multiplyMatrices
+        thetaTimesX = multipyMatrices(theta, x)
+        yMinusThetaX = [y[i]-[thetaTimesX[i] for i in range(len(y))]]
+        etaTimesGradient = [c*yMinusThetaX[i] for i in range(len(yMinusThetaX))]
+        current_x = [current_x[i] - etaTimesGradient[i] for i in range(len(current_x))]
+        #End of update block
+        
         mean_square_change = 0
 
     return current_x
