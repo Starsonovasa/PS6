@@ -69,10 +69,46 @@ def mean_square_diff(v1,v2):
 #    x_at_iteration_k+1 = [1,4,2,6]
 #    mean_square_change = mean_square_diff(x_at_iteration_k,x_at_iteration_k+1)
 
-def multipyMatrices(matrix1, matrix2):
-    matrix1n, matrix1m = len(matrix1), len(matrix1[0])
-    matrix2n, matrix2m = len(matrix2), len(matrix2[0])
-    pass
+# def multipyMatrices(matrix1, matrix2):
+#     matrix1n, matrix1m = len(matrix1), len(matrix1[0])
+#     matrix2n, matrix2m = len(matrix2), len(matrix2[0])
+#     
+#     end_matrix = []
+#     #Initialize the end matrix with same # rows as Matrix 1 and same # of columns as
+#     #Matrix 2
+#     for i in range(matrix1n):
+#         end_matrix[i] = []
+#         for j in range:
+#             end_matrix[i][j] = 0
+#             
+#     #We're about to see a lot of ugly looping
+#     #For each column number of Matrix 2
+#     for i in range(matrix2n):
+#         #For each row in Matrix 2
+#         for j in range(matrix2m):
+#             #Note that matrix2n = matrix1m
+#             for k in range(matrix1m):
+#                 #Row M1 * Column M2 = sum
+#                 sum = 0
+#                 for l in range(matrix1n):
+#                     sum += matrix1[l][k] * matrix2[i][j]
+#                     
+#                 end_matrix[l][j] = sum
+#                     
+#     return end_matrix
+
+def vectorMultiply(matrix, vector):
+    n, m = len(matrix), len(matrix[0])
+    end_vector = [0 for i in range(n)]
+    
+    for i in range(n):
+        sum = 0
+        for j in range(m):
+            sum += matrix[i][j] * vector[j]
+            
+        end_vector[i] = sum
+    
+    return end_vector
 '''
 Compute a 'sufficiently close to optimal' x using gradient descent
 Inputs:
@@ -88,23 +124,34 @@ def gradient_descent(Theta, Y, initial_x, eta):
     n,m = len(Theta),len(Theta[0])
     current_x = initial_x
     mean_square_change = 1
+    c = 2*eta/n
+    
+    def vectorSubtract(vector1, vector2):
+        sum = [vector1[i] - vector2[i] for i in range(len(vector1))]
+        return sum
+    
+    def scalarMultiply(scalar, vector):
+        product = [scalar*vector[i] for i in range(len(vector))]
+        return product
 
     while mean_square_change > 0.0000000001:
+        
         #TODO: update current x and compute stopping condition
         #current_x = current_x - (2*eta/n)*(y-Theta*x)
         #So I need a function that can multiply two matrices. Which is quite ugly
         
         #update block
-        c = 2*eta/n
+        
         #TODO: actually implement multiplyMatrices
-        thetaTimesX = multipyMatrices(theta, x)
-        yMinusThetaX = [y[i]-[thetaTimesX[i] for i in range(len(y))]]
-        etaTimesGradient = [c*yMinusThetaX[i] for i in range(len(yMinusThetaX))]
-        current_x = [current_x[i] - etaTimesGradient[i] for i in range(len(current_x))]
+        thetaTimesX = vectorMultiply(Theta, current_x)
+        yMinusThetaX = vectorSubtract(Y, thetaTimesX)
+        etaTimesGradient = scalarMultiply(c, yMinusThetaX)
+        new_x = vectorSubtract(current_x, etaTimesGradient)
         #End of update block
         
-        mean_square_change = 0
-
+        mean_square_change = mean_square_diff(current_x, new_x)
+        current_x = new_x
+        
     return current_x
 
 
