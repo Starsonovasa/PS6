@@ -111,7 +111,9 @@ def matrixVectorMultiply(matrix, vector):
     return end_vector
 
 def dotProduct(vector1, vector2):
-    output += vector1[i]*vector2[i] for i in range(len(vector1))
+    output = 0
+    for i in range(len(vector1)):
+        output += vector1[i]*vector2[i]
     return output
 '''
 Compute a 'sufficiently close to optimal' x using gradient descent
@@ -128,7 +130,7 @@ def gradient_descent(Theta, Y, initial_x, eta):
     n,m = len(Theta),len(Theta[0])
     current_x = initial_x
     mean_square_change = 1
-    c = 2*eta/n
+    c = 2/n
     
     def vectorSubtract(vector1, vector2):
         diff = [vector1[i] - vector2[i] for i in range(len(vector1))]
@@ -154,11 +156,15 @@ def gradient_descent(Theta, Y, initial_x, eta):
         
         #update block
         
-        #TODO: actually implement multiplyMatrices
+        
+        Gradient = [0 for i in range(m)]
         for row in range(n):
             thetaDotX = dotProduct(Theta[row], current_x)
             yMinusThetaX = Y[row] - thetaDotX
-            etaTimesGradient = scalarMultiply(c, yMinusThetaX)
+            stepForGradientSum = scalarMultiply(yMinusThetaX, Theta[row])
+            Gradient = vectorAdd(Gradient, stepForGradientSum)
+            
+        etaTimesGradient = scalarMultiply(c, Gradient)
         new_x = vectorSubtract(current_x, etaTimesGradient)
         #End of update block
         
