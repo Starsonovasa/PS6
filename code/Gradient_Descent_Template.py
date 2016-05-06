@@ -115,6 +115,19 @@ def dotProduct(vector1, vector2):
     for i in range(len(vector1)):
         output += vector1[i]*vector2[i]
     return output
+
+def vectorSubtract(vector1, vector2):
+    diff = [vector1[i] - vector2[i] for i in range(len(vector1))]
+    return diff
+
+def vectorAdd(vector1, vector2):
+    sum = [vector1[i] + vector2[i] for i in range(len(vector1))]
+    return sum
+
+def scalarMultiply(scalar, vector):
+    product = [scalar*vector[i] for i in range(len(vector))]
+    return product
+
 '''
 Compute a 'sufficiently close to optimal' x using gradient descent
 Inputs:
@@ -130,19 +143,7 @@ def gradient_descent(Theta, Y, initial_x, eta):
     n,m = len(Theta),len(Theta[0])
     current_x = initial_x
     mean_square_change = 1
-    c = 2/n
-    
-    def vectorSubtract(vector1, vector2):
-        diff = [vector1[i] - vector2[i] for i in range(len(vector1))]
-        return diff
-    
-    def vectorAdd(vector1, vector2):
-        sum = [vector1[i] + vector2[i] for i in range(len(vector1))]
-        return sum
-    
-    def scalarMultiply(scalar, vector):
-        product = [scalar*vector[i] for i in range(len(vector))]
-        return product
+    c = 2.0/n
 
     while mean_square_change > 0.0000000001:
         
@@ -157,22 +158,35 @@ def gradient_descent(Theta, Y, initial_x, eta):
         #update block
         
         
-        Gradient = [0 for i in range(m)]
+        gradient = [0 for i in range(m)]
         for row in range(n):
             thetaDotX = dotProduct(Theta[row], current_x)
             yMinusThetaX = Y[row] - thetaDotX
-            stepForGradientSum = scalarMultiply(yMinusThetaX, Theta[row])
-            Gradient = vectorAdd(Gradient, stepForGradientSum)
+            stepForGradientSum = [0 for i in range(m)]
+            for column in range(m):
+                dGdx_k = yMinusThetaX * Theta[row][column]
+                stepForGradientSum[column] = dGdx_k
+                
+            gradient = vectorAdd(gradient, stepForGradientSum)
             
-        etaTimesGradient = scalarMultiply(c, Gradient)
+        
+        gradient = scalarMultiply(c, gradient)
+        etaTimesGradient = scalarMultiply(eta, gradient)
+        #Up to here is definitely correct
         new_x = vectorSubtract(current_x, etaTimesGradient)
         #End of update block
         
+        #But my mean square change is blowing up like crazy
         mean_square_change = mean_square_diff(current_x, new_x)
         current_x = new_x
         
     return current_x
 
+Theta = [[1.0,2.0],[2.0,4.0],[3.0,1.0]]
+initial_x = [4.0, 1.0]
+Y = [5.0, 7.0, 9.0]
+eta = 1.0
+gradient_descent(Theta, Y, initial_x, eta)
 
 ##################################################################
 ############### Part C: Minibatch Gradient Descent################
